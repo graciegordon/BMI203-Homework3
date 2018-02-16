@@ -21,80 +21,82 @@ def get_score(seqB,seqA,i,j,label,matrix):
 
     
     score=matrix[posA][posB]
-    print(seqA,seqB,i,j)
-    print(curCharA,curCharB)
-    print('score',score)
+    #print(seqA,seqB,i,j)
+    #print(curCharA,curCharB)
+    #print('score',score)
     return score
 
 def local_align(seqA, seqB, scoring_matrix, labels, gapscore):
     
-    print('test score')
-    print(scoring_matrix)
+    #print('test score')
+    #print(scoring_matrix)
 
     #initialize matrix
     H=make_matrix(len(seqA)+1,len(seqB)+1)
-    print('H')
-    print(H) 
+    #print('H')
+    #print(H) 
     best=0
     bestloc=(0,0)
 
     # fill in H in the right order
     for i in range(1, len(seqB)):
         for j in range(1,len(seqA)):
-            print('idx A,B',i,j)
+            #print('idx A,B:',i,j)
             
             #define local alignment recurrance rule
             matchscore=get_score(seqB,seqA,i,j,labels,scoring_matrix)
-            print(matchscore)
+            #print(matchscore)
             H[i][j]=max(
                     H[i][j-1]+gapscore,
                     H[i-1][j]+gapscore,
                     H[i-1][j-1]+matchscore,
                     0
             )
-            print(H[i][j])
+            #print(H[i][j])
 
             #keep track of cell with the largest score
             if H[i][j] >= best:
                 best=H[i][j]
                 bestloc=(i,j)
 
-    print(H)
+    #print(H)
     return best, bestloc
 
-#define gap
-gap=-2
-scoremat=[]
-#define score matrix
-with open(sys.argv[1],'r') as smat:
-    iter=0 
-    for line in smat:
-        line=line.rstrip()
-        if line[0]!='#':
-            print(line)
-            if iter==0:
-                #header=np.fromstring(line,dtype=str, sep=' ')
-                #line.replace(' ',',')
-                header=list(np.array(line.split()))
-                print('header',header)
-                scorelabels={}
-                for i in range(len(header)):
-                    scorelabels[header[i]]=i
-                print(scorelabels)
-                iter+=1
-            else:
-                line=list(np.fromstring(line, dtype=int, sep=' '))
-                scoremat.append(line)
-                #temp=pd.DataFrame(line)
-                #scoremat.append(temp,ignore_index=True)
-                
-                #print(temp)
-                #print(scoremat)
-
+def create_score_mat(matrix):
+    #define score matrix
+    with open(matrix,'r') as smat:
+        iter=0 
+        for line in smat:
+            line=line.rstrip()
+            if line[0]!='#':
+                #print(line)
+                if iter==0:
+                    #header=np.fromstring(line,dtype=str, sep=' ')
+                    #line.replace(' ',',')
+                    header=list(np.array(line.split()))
+                    #print('header',header)
+                    scorelabels={}
+                    for i in range(len(header)):
+                        scorelabels[header[i]]=i
+                    print(scorelabels)
+                    iter+=1
+                else:
+                    line=list(np.fromstring(line, dtype=int, sep=' '))
+                    scoremat.append(line)
+                    #temp=pd.DataFrame(line)
+                    #scoremat.append(temp,ignore_index=True)
+    
+    return scoremat, scorelabels
 
         
 
-print(scoremat)            
+#define gap
+gap=float(sys.argv[2])
+scoremat=[]
+mat=sys.argv[1]
+scoremat,scorelabels=create_score_mat(mat)
+
+print(scoremat)
 print(scorelabels)
 
-print(local_align('AACCCMMMS','CCCCAAATTMMA',scoremat,scorelabels,-2))
+print(local_align('AACCCMMMS','CCCCAAATTMMA',scoremat,scorelabels,gap))
