@@ -3,37 +3,18 @@ import numpy as np
 import pandas as pd
 import sys
 
-'''
-def make_matrix(sizeX,sizeY):
-    #create matrix filled with zeros 
-    #np.zeros(sizeX,sizeY)
-    return np.zeros((sizeY,sizeX))
-    #return [[0]]*sizeB for i in xrange(sizeA)]
-'''
 
 def get_score(seqB,seqA,i,j,label,matrix):
 
     #get letter of current position in both strings
     #converted back to 0 numbering
-    curCharA=seqA[i-1]
-    curCharB=seqB[j-1]
-    
-    #get score between two characters
-    posA=label[curCharA]
-    posB=label[curCharB]
-
-    
-    score=matrix[posA][posB]
-    #print(seqA,seqB,i,j, curCharA,curCharB)
-    #print(curCharA,curCharB)
-    #print('score',score)
+     
+    #score=matrix[posA][posB]
+    score=matrix[label[seqA[i-1]]][label[seqB[j-1]]]
     return score
 
 def local_align(seqA, seqB, scoring_matrix, labels, gapscore,extend):
     
-    #print('test score')
-    #print(scoring_matrix)
-
     #initialize matrix
     H=np.zeros((len(seqA)+1,len(seqB)+1))
     state = [['x' for x in range(len(seqB)+1)] for y in range(len(seqA)+1)]
@@ -42,13 +23,19 @@ def local_align(seqA, seqB, scoring_matrix, labels, gapscore,extend):
     bestloc=(0,0)
     curstat=''
     # fill in H in the right order
-    print('fill mat')
     for i in range(1, len(seqA)):
+        #print('row')
         for j in range(1,len(seqB)):
+            #print('innerloop')
             #print('idx A,B:',i,j)
             curmax=0        
             #print('calc match') 
-            matchscore=H[i-1][j-1]+get_score(seqB,seqA,i,j,labels,scoring_matrix)
+            diag=H[i-1][j-1]
+            #west=H[i][j-1]
+            #north=H[i-1][j]
+
+            matchscore=diag+get_score(seqB,seqA,i,j,labels,scoring_matrix)
+            
             #print('matchscore',matchscore) 
             #print('compare cells')
             #compare west cell
@@ -74,12 +61,14 @@ def local_align(seqA, seqB, scoring_matrix, labels, gapscore,extend):
 
             #score=H[i-1][j-1]
             #print('determine max')
-            alignmentScore=max(0,matchscore,northscore,westscore)
+            #alignmentScore=max(0,matchscore,northscore,westscore)
 
-            if alignmentScore==matchscore:
+            if matchscore == max(matchscore,northscore,westscore):
                 curstat='match'
-
-            H[i][j]=alignmentScore
+            
+            ##update current matrix
+            H[i][j]=max(0,matchscore,northscore,westscore)
+            
             state[i][j]=str(curstat)
             #print('score',alignmentScore)
             #if this is the new best score take note
@@ -93,7 +82,6 @@ def local_align(seqA, seqB, scoring_matrix, labels, gapscore,extend):
     #print(state)
             
 
-    print('traceback')
     ###TRACEBACK
     i=bestloc[0]
     j=bestloc[1]
@@ -115,9 +103,9 @@ def local_align(seqA, seqB, scoring_matrix, labels, gapscore,extend):
         elif state[i][j] == 'west':
             align='-'+align
             i=i-1
-    print('align',align)
+    #print('align',align)
 
-    return best, bestloc
+    return best, bestloc, align
 
 def TraceBack(seqA,seqB,best, bestloc, state):
     #find optimal alignment
@@ -171,7 +159,6 @@ def create_score_mat(matrix):
                     scoremat.append(line)
                     #temp=pd.DataFrame(line)
                     #scoremat.append(temp,ignore_index=True)
-    print('made score mat')
     return scoremat, scorelabels
 
 '''        
