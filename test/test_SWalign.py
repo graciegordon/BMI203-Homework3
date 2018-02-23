@@ -3,7 +3,7 @@ from functions import swalign
 def test_alignscore():
     seq1='TGTTACGG'
     seq2='GGTTGACTA'
-    mat='/scoringTables/BLOSUM50'
+    mat='scoringTables/BLOSUM50'
     gapscore=-2
     extend=0
     scoring_matrix,scorelabels=swalign.create_score_mat(mat)
