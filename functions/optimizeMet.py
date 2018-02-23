@@ -2,23 +2,19 @@
 
 import sys
 import numpy as np
-#import SW_align as sw
 from random import *
 
 def Permute_mat(matrix):
-    #for line in matrix:
-        #print(line)
-    #print(matrix)
-    #print(len(matrix))
     
     #spot to change
     i= randint(0,len(matrix)-1)
     j= randint(0,len(matrix)-1)
-    #spot to swap with
     
+    #spot to swap with 
     x=randint(0,len(matrix)-1)
     y=randint(0,len(matrix)-1)
 
+    #make sure these are differet spots
     while (x==i and j==y) or (x==j and y==i):
         x=randint(0,len(matrix)-1)
         y=randint(0,len(matrix)-1)
@@ -28,20 +24,13 @@ def Permute_mat(matrix):
 
     pos1a=matrix[j][i]
     pos2a=matrix[y][x]
-    
-    print('first pos',i,j)
-    print(pos1,pos1a)
-    print('second pos',x,y)
-    print(pos2,pos2a)
-    
+   
+    ##swap 
     matrix[i][j]=pos2
     matrix[j][i]=pos2
     matrix[x][y]=pos1
     matrix[y][x]=pos1
     
-    #for line in matrix:
-        #print(line)
-    #print(matrix)
     return matrix
 
 def out_TPR(allscores,fpr):
@@ -54,11 +43,15 @@ def out_TPR(allscores,fpr):
     totpos=0
     truepos=0
 
+    #count true positives and negatives
     for i in allscores:
         if i[0]=='neg':
             totneg+=1
         if i[0]=='pos':
             totpos+=1
+    
+    #given false positive threshold, calculate rates 
+    #by summing pos and negs until the thresh is reached
     for item in allscores:
         if fpr==0:
             if item[0]=='pos':
@@ -70,7 +63,6 @@ def out_TPR(allscores,fpr):
             counter+=1
             countf=float(neg_count)/totneg
             truepos=float(pos_count)/counter
-            #print(truepos)
             break
         if float(countf) < float(fpr):
             if item[0]=='pos':
@@ -82,8 +74,6 @@ def out_TPR(allscores,fpr):
             counter+=1
             countf=float(neg_count)/totneg
             truepos=float(pos_count)/totpos
-            #print('fpr',countf)
-    #print('tp',truepos)
     
     return truepos
         
