@@ -1,0 +1,1 @@
+sequences/prot-0004.fa sequences/prot-0008.fa

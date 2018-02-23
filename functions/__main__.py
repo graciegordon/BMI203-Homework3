@@ -17,6 +17,7 @@ outfile2=open(sys.argv[6],'w')
 #define gap
 gap=float(sys.argv[3])
 extend=float(sys.argv[4])
+
 #read in scoring matrix
 mat=sys.argv[1]
 scoremat,scorelabels=sw.create_score_mat(mat)
@@ -35,11 +36,13 @@ with open(sys.argv[2],'r') as seqs:
         with open(path+cur[0],'r') as seq1:
             for a in seq1:
                 a=a.strip()
+                a=a.upper()
                 if a[0]!='>':
                     seqA=seqA+a 
         #print('seqA',seqA) 
         with open(path+cur[1],'r') as seq2:
             for b in seq2:
+                b=b.upper()
                 b=b.strip()
                 if b[0]!='>':
                     seqB=seqB+b 
