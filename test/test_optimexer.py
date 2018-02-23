@@ -10,7 +10,7 @@ def test_Calc_TP():
 
 def test_edit_matrix():
     
-    matrix='/scoringTables/BLOSUM50'
+    matrix='scoringTables/BLOSUM50'
     matrix, label=swalign.create_score_mat(matrix)
     newmat=optimizeMet.Permute_mat(matrix)
     flatMat = lambda matrix: [item for sublist in l for item in sublist]
