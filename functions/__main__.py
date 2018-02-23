@@ -4,7 +4,8 @@
 
 
 import sys
-import SW_align as sw  
+from functions import swalign as sw
+#import SW_align as sw  
 
 #path to seqs
 path='/Users/student/Documents/Algorithms/Homework3/BMI203-Homework3/'
